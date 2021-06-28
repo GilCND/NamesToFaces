@@ -8,7 +8,8 @@
 import UIKit
 
 class ViewController: UICollectionViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    var people = [Person]()
+    var people: [Person] = []
+    let loadingVC = LoadingViewController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16,7 +17,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return people.count
+        people.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -36,10 +37,12 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
     }
     
     @objc private func addNewPerson() {
+        startLoadingAnimation()
         let picker = UIImagePickerController()
         picker.allowsEditing = true
         picker.delegate = self
         present(picker, animated: true)
+        stopLoadingAnimation()
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -62,28 +65,13 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let person = people[indexPath.item]
-        
+        	
         let alertController = UIAlertController(title: nil, message: "Please Select an Option", preferredStyle: .actionSheet)
         
-        alertController.addAction(UIAlertAction(title: "Rename", style: .default, handler: { (_) in
-            
-            let renameAlertController = UIAlertController(title: "Rename", message: "What's the new name?", preferredStyle: .alert)
-            renameAlertController.addTextField()
-            
-            renameAlertController.addAction(UIAlertAction(title: "Rename", style: .default) { [weak self, weak renameAlertController] _ in
-                guard let self = self else { return }
-                guard let newName = renameAlertController?.textFields?[0].text else { return }
-                person.name = newName
-                
-                self.collectionView.reloadData()
-            })
-            
-            renameAlertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { [weak renameAlertController] _ in
-                renameAlertController?.dismiss(animated: true)
-            }))
-            
-            self.present(renameAlertController, animated: true)
+        alertController.addAction(UIAlertAction(title: "Rename", style: .default, handler: { [weak self] _ in
+            guard let self = self else { return }
+            let renameAlertViewController = self.makeRenameAlertViewController(indexPath: indexPath)
+            self.present(renameAlertViewController, animated: true)
         }))
         
         alertController.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self, weak alertController] _ in
@@ -98,9 +86,37 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         }))
         
         
-        self.present(alertController, animated: true, completion: {
+        self.present(alertController, animated: true)
+        
+    }
+    func makeRenameAlertViewController(indexPath: IndexPath) -> UIAlertController {
+        
+        let renameAlertController = UIAlertController(title: "Rename", message: "What's the new name?", preferredStyle: .alert)
+        renameAlertController.addTextField()
+        
+        renameAlertController.addAction(UIAlertAction(title: "Rename", style: .default) { [weak self, weak renameAlertController] _ in
+            guard let self = self, let newName = renameAlertController?.textFields?[0].text else { return }
+            self.people[indexPath.item].name = newName
+            
+            self.collectionView.reloadData()
         })
         
+        renameAlertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { [weak renameAlertController] _ in
+            
+            renameAlertController?.dismiss(animated: true)
+          
+        }))
+        return renameAlertController
+    }
+    
+    private func startLoadingAnimation() {
+        loadingVC.modalPresentationStyle = .overCurrentContext
+        loadingVC.modalTransitionStyle = .crossDissolve
+        present(loadingVC, animated: true, completion: nil)
+    }
+    
+    private func stopLoadingAnimation() {
+        loadingVC.dismiss(animated: true, completion: nil)
     }
 }
 
