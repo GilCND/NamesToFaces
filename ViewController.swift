@@ -21,12 +21,11 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Person", for: indexPath) as? PersonCell else {
+        let person = people[indexPath.item]
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Person", for: indexPath) as? PersonCell, let path = getDocumentsDirectory()?.appendingPathComponent(person.image) else {
             fatalError("Enable to deque PersonCell")
         }
-        let person = people[indexPath.item]
         cell.name.text = person.name
-        let path = getDocumentsDirectory().appendingPathComponent(person.image)
         cell.imageView.image = UIImage(contentsOfFile: path.path)
         cell.imageView.layer.borderColor = UIColor(white: 0, alpha: 0.3).cgColor
         cell.imageView.layer.borderWidth = 2
@@ -46,10 +45,10 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        guard let image = info[.editedImage] as? UIImage else { return }
         let imageName = UUID().uuidString
-        let imagepath = getDocumentsDirectory().appendingPathComponent(imageName)
-        
+        guard let image = info[.editedImage] as? UIImage,
+              let imagepath = getDocumentsDirectory()?.appendingPathComponent(imageName) else { return }
+    
         if let jpegData = image.jpegData(compressionQuality: 0.8) {
             try? jpegData.write(to: imagepath)
         }
@@ -59,9 +58,8 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         dismiss(animated: true)
     }
     
-    private func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        return paths[0]
+    private func getDocumentsDirectory() -> URL? {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -84,8 +82,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { [weak alertController] _ in
             alertController?.dismiss(animated: true)
         }))
-        
-        
+    
         self.present(alertController, animated: true)
         
     }
