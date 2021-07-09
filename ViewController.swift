@@ -6,10 +6,26 @@
 //
 
 import UIKit
-
+	
 class ViewController: UICollectionViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     var people: [Person] = []
-    let loadingVC = LoadingViewController()
+    
+    
+    let loadingActivityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+            indicator.style = .large
+            indicator.color = .white
+            indicator.startAnimating()
+            indicator.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleTopMargin, .flexibleBottomMargin]
+            return indicator
+    }()
+    let blurEffectView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .dark)
+            let blurEffectView = UIVisualEffectView(effect: blurEffect)
+            blurEffectView.alpha = 0.8
+            blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            return blurEffectView
+        }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,11 +57,12 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         picker.allowsEditing = true
         picker.delegate = self
         present(picker, animated: true)
-        stopLoadingAnimation()
+        
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         let imageName = UUID().uuidString
+        
         guard let image = info[.editedImage] as? UIImage,
               let imagepath = getDocumentsDirectory()?.appendingPathComponent(imageName) else { return }
     
@@ -55,11 +72,21 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         let person = Person(name: "Unknown", image: imageName)
         people.append(person)
         collectionView.reloadData()
-        dismiss(animated: true)
+        dismiss(animated: true){ [weak self] in
+            guard let self = self else { return }
+            self.stopLoadingAnimation()
+        }
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true){ [weak self] in
+            guard let self = self else { return }
+            self.stopLoadingAnimation()
+        }
     }
     
     private func getDocumentsDirectory() -> URL? {
-        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+       FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -83,7 +110,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
             alertController?.dismiss(animated: true)
         }))
     
-        self.present(alertController, animated: true)
+        present(alertController, animated: true)
         
     }
     func makeRenameAlertViewController(indexPath: IndexPath) -> UIAlertController {
@@ -94,7 +121,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         renameAlertController.addAction(UIAlertAction(title: "Rename", style: .default) { [weak self, weak renameAlertController] _ in
             guard let self = self, let newName = renameAlertController?.textFields?[0].text else { return }
             self.people[indexPath.item].name = newName
-            
+           
             self.collectionView.reloadData()
         })
         
@@ -106,14 +133,29 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         return renameAlertController
     }
     
-    private func startLoadingAnimation() {
-        loadingVC.modalPresentationStyle = .overCurrentContext
-        loadingVC.modalTransitionStyle = .crossDissolve
-        present(loadingVC, animated: true, completion: nil)
+    private func startLoadingAnimation() { 
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        blurEffectView.translatesAutoresizingMaskIntoConstraints = false // This is an explicit declaration that auto resizing masks won't be used
+              loadingActivityIndicator.translatesAutoresizingMaskIntoConstraints = false
+              view.addSubview(blurEffectView)
+              view.addSubview(loadingActivityIndicator)
+              NSLayoutConstraint.activate([
+                
+                  // the lines below basically say that all edges of the blur effect view will be pinned to the view's ones
+                  blurEffectView.topAnchor.constraint(equalTo: view.topAnchor),
+                  blurEffectView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                  blurEffectView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                  blurEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                
+                  // and these place the indicator centered in the view at all times
+                  loadingActivityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+                  loadingActivityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+              ])
     }
     
     private func stopLoadingAnimation() {
-        loadingVC.dismiss(animated: true, completion: nil)
+        blurEffectView.removeFromSuperview()
+        loadingActivityIndicator.removeFromSuperview()
     }
 }
 
