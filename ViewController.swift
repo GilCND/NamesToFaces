@@ -22,21 +22,21 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
     let blurEffectView: UIVisualEffectView = {
         let blurEffect = UIBlurEffect(style: .dark)
             let blurEffectView = UIVisualEffectView(effect: blurEffect)
-            blurEffectView.alpha = 0.8
+            blurEffectView.alpha = 0.9
             blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             return blurEffectView
         }()
     
-    override func viewDidLoad() {
+    override internal func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewPerson))
     }
 
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override internal func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         people.count
     }
     
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override internal func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let person = people[indexPath.item]
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Person", for: indexPath) as? PersonCell, let path = getDocumentsDirectory()?.appendingPathComponent(person.image) else {
             fatalError("Enable to deque PersonCell")
@@ -53,14 +53,16 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
     
     @objc private func addNewPerson() {
         startLoadingAnimation()
-        let picker = UIImagePickerController()
-        picker.allowsEditing = true
-        picker.delegate = self
-        present(picker, animated: true)
-        
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            let picker = UIImagePickerController()
+            picker.allowsEditing = true
+            picker.delegate = self
+            self.present(picker, animated: true)
+        }
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    internal func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         let imageName = UUID().uuidString
         
         guard let image = info[.editedImage] as? UIImage,
@@ -78,7 +80,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         }
     }
     
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+    internal func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true){ [weak self] in
             guard let self = self else { return }
             self.stopLoadingAnimation()
@@ -89,7 +91,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
     }
     
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    override internal func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         	
         let alertController = UIAlertController(title: nil, message: "Please Select an Option", preferredStyle: .actionSheet)
         
@@ -113,7 +115,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         present(alertController, animated: true)
         
     }
-    func makeRenameAlertViewController(indexPath: IndexPath) -> UIAlertController {
+    private func makeRenameAlertViewController(indexPath: IndexPath) -> UIAlertController {
         
         let renameAlertController = UIAlertController(title: "Rename", message: "What's the new name?", preferredStyle: .alert)
         renameAlertController.addTextField()
@@ -137,8 +139,11 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         blurEffectView.translatesAutoresizingMaskIntoConstraints = false // This is an explicit declaration that auto resizing masks won't be used
               loadingActivityIndicator.translatesAutoresizingMaskIntoConstraints = false
-              view.addSubview(blurEffectView)
-              view.addSubview(loadingActivityIndicator)
+        
+        #warning("Is there a way to make both suibviews to be called in one line?")
+        UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.addSubview(blurEffectView)
+        UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.addSubview(loadingActivityIndicator)
+        
               NSLayoutConstraint.activate([
                 
                   // the lines below basically say that all edges of the blur effect view will be pinned to the view's ones

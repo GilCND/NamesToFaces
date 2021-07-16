@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		604FD44226A1D0C500E5D242 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 604FD44126A1D0C500E5D242 /* Assets.xcassets */; };
+		604FD44526A1D0F800E5D242 /* Marker Felt Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 604FD44426A1D0F800E5D242 /* Marker Felt Thin.ttf */; };
 		605F55A4268108F500AE6F6C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605F55A3268108F500AE6F6C /* AppDelegate.swift */; };
 		605F55A6268108F500AE6F6C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605F55A5268108F500AE6F6C /* SceneDelegate.swift */; };
 		605F55A8268108F500AE6F6C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605F55A7268108F500AE6F6C /* ViewController.swift */; };
@@ -15,9 +17,12 @@
 		605F55B0268108F600AE6F6C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 605F55AE268108F600AE6F6C /* LaunchScreen.storyboard */; };
 		605F55B82681106900AE6F6C /* PersonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605F55B72681106900AE6F6C /* PersonCell.swift */; };
 		605F55BA26811C3200AE6F6C /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605F55B926811C3200AE6F6C /* Person.swift */; };
+		608D12802689FB9C00A62FF3 /* Marker Felt Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 608D127F2689FB9C00A62FF3 /* Marker Felt Thin.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		604FD44126A1D0C500E5D242 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		604FD44426A1D0F800E5D242 /* Marker Felt Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Marker Felt Thin.ttf"; sourceTree = SOURCE_ROOT; };
 		605F55A0268108F500AE6F6C /* nameToFaces.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nameToFaces.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		605F55A3268108F500AE6F6C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		605F55A5268108F500AE6F6C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -28,6 +33,7 @@
 		605F55B1268108F600AE6F6C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		605F55B72681106900AE6F6C /* PersonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonCell.swift; sourceTree = "<group>"; };
 		605F55B926811C3200AE6F6C /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
+		608D127F2689FB9C00A62FF3 /* Marker Felt Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Marker Felt Thin.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,7 +68,10 @@
 			children = (
 				605F55A3268108F500AE6F6C /* AppDelegate.swift */,
 				605F55A5268108F500AE6F6C /* SceneDelegate.swift */,
+				608D127F2689FB9C00A62FF3 /* Marker Felt Thin.ttf */,
 				605F55A7268108F500AE6F6C /* ViewController.swift */,
+				604FD44426A1D0F800E5D242 /* Marker Felt Thin.ttf */,
+				604FD44126A1D0C500E5D242 /* Assets.xcassets */,
 				605F55B926811C3200AE6F6C /* Person.swift */,
 				605F55A9268108F500AE6F6C /* Main.storyboard */,
 				605F55B72681106900AE6F6C /* PersonCell.swift */,
@@ -133,6 +142,9 @@
 				605F55B0268108F600AE6F6C /* LaunchScreen.storyboard in Resources */,
 				605F55AD268108F600AE6F6C /* Assets.xcassets in Resources */,
 				605F55AB268108F500AE6F6C /* Main.storyboard in Resources */,
+				608D12802689FB9C00A62FF3 /* Marker Felt Thin.ttf in Resources */,
+				604FD44526A1D0F800E5D242 /* Marker Felt Thin.ttf in Resources */,
+				604FD44226A1D0C500E5D242 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -304,7 +316,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = practice.fsg.nameToFaces;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -323,7 +335,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = practice.fsg.nameToFaces;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
